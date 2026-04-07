@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/ashwathsingh/learning-api-golang/internal/product"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
@@ -36,6 +37,9 @@ func (app *application) mount() http.Handler {
 		w.Write([]byte("all good"))
 	})
 
+	productHandler := product.NewHandler(nil)
+
+	r.Get("/products", productHandler.ListProducts)
 	//	http.ListenAndServe(":3333", r)
 
 	return r
@@ -49,7 +53,7 @@ func (app *application) run(h http.Handler) error {
 		IdleTimeout: time.Minute,
 	}
 
-	log.Println("server has started at addr %s", app.config.addr)
+	log.Printf("server has started at addr %s", app.config.addr)
 
 	return srv.ListenAndServe()
 }
