@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"time"
 
@@ -38,6 +39,19 @@ func (app *application) mount() http.Handler {
 	//	http.ListenAndServe(":3333", r)
 
 	return r
+}
+
+func (app *application) run(h http.Handler) error {
+	srv := &http.Server{
+		Addr: app.config.addr,
+		Handler: h,
+		WriteTimeout: time.Second * 30,
+		IdleTimeout: time.Minute,
+	}
+
+	log.Println("server has started at addr %s", app.config.addr)
+
+	return srv.ListenAndServe()
 }
 
 type config struct {
